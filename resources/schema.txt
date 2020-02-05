@@ -1,0 +1,88 @@
+CREATE TABLE superstore (
+	row_id INT PRIMARY KEY,
+	order_id VARCHAR(25),
+	order_date DATE,
+	ship_date DATE,
+	ship_mode VARCHAR(30),
+	customer_id VARCHAR(25),
+	customer_name VARCHAR(50),
+	segment VARCHAR(30),
+	country VARCHAR(25),
+	city VARCHAR(50),
+	state VARCHAR(30),
+	postal_code INT,
+	region VARCHAR(10),
+	product_id VARCHAR(30),
+	category VARCHAR(30),
+	sub_category VARCHAR(30),
+	product_name VARCHAR(250),
+	sales FLOAT,
+	quantity INT,
+	discount FLOAT,
+	profit FLOAT
+);
+
+/be sure to import the file as csv type with encoding Latin1/
+
+-- ALTER TABLE superstore ADD COLUMN year INT;
+
+-- UPDATE superstore
+-- SET year= (EXTRACT (year from order_date))
+-- WHERE superstore.year IS NULL;
+
+-- SELECT year FROM superstore;
+
+-- SELECT region, year, SUM(profit)
+-- FROM superstore
+-- GROUP BY region, year
+-- ORDER BY year;
+
+-- SELECT region, year, SUM(profit)
+-- FROM superstore
+-- WHERE region = "South" AND year = "2015"
+
+-- ALTER TABLE superstore ADD COLUMN month INT;
+
+-- SELECT * FROM superstore;
+
+-- UPDATE superstore
+-- SET month= (EXTRACT (month from order_date))
+-- WHERE superstore.month IS NULL;
+
+-- SELECT month FROM superstore;
+
+-- SELECT region, year, month, profit
+-- FROM superstore
+
+GRANT SELECT ON superstore TO PUBLIC;
+
+\copy (SELECT region, year, month, profit FROM superstore) to 'C:\Users\gcuta\Documents\Final Project\profits.csv' with csv header;
+
+(completed in psql)
+
+SELECT year, month, SUM(profit) AS profit
+FROM superstore
+WHERE region = 'South'
+GROUP BY region, year, month
+ORDER BY year, month;
+
+\copy (SELECT year, month, SUM(profit) AS profit FROM superstore WHERE region = 'South' GROUP BY region, year, month ORDER BY year, month) to 'C:\Users\gcuta\Documents\Final Project\data\south_profits.csv' with csv header;
+\copy (SELECT year, month, SUM(profit) AS profit FROM superstore WHERE region = 'East' GROUP BY region, year, month ORDER BY year, month) to 'C:\Users\gcuta\Documents\Final Project\data\east_profits.csv' with csv header;
+\copy (SELECT year, month, SUM(profit) AS profit FROM superstore WHERE region = 'West' GROUP BY region, year, month ORDER BY year, month) to 'C:\Users\gcuta\Documents\Final Project\data\west_profits.csv' with csv header;
+\copy (SELECT year, month, SUM(profit) AS profit FROM superstore WHERE region = 'Central' GROUP BY region, year, month ORDER BY year, month) to 'C:\Users\gcuta\Documents\Final Project\data\central_profits.csv' with csv header;
+
+-- SELECT date_part('epoch', order_date) as epoch FROM superstore;
+
+-- ALTER TABLE superstore ADD COLUMN order_date_epoch DOUBLE PRECISION;
+
+-- SELECT * FROM superstore;
+
+-- UPDATE superstore
+-- SET order_date_epoch= (date_part('epoch', order_date))
+-- WHERE superstore.order_date_epoch IS NULL;
+
+SELECT order_date_epoch FROM superstore;
+\copy (SELECT order_date_epoch, order_date, SUM(profit) AS profit FROM superstore WHERE region = 'South' GROUP BY region, order_date_epoch, order_date ORDER BY order_date_epoch) to 'C:\Users\gcuta\Documents\Final Project\data\south_profits.csv' with csv header;
+\copy (SELECT order_date_epoch, order_date, SUM(profit) AS profit FROM superstore WHERE region = 'East' GROUP BY region, order_date_epoch, order_date ORDER BY order_date_epoch) to 'C:\Users\gcuta\Documents\Final Project\data\east_profits.csv' with csv header;
+\copy (SELECT order_date_epoch, order_date, SUM(profit) AS profit FROM superstore WHERE region = 'West' GROUP BY region, order_date_epoch, order_date ORDER BY order_date_epoch) to 'C:\Users\gcuta\Documents\Final Project\data\west_profits.csv' with csv header;
+\copy (SELECT order_date_epoch, order_date, SUM(profit) AS profit FROM superstore WHERE region = 'Central' GROUP BY region, order_date_epoch, order_date ORDER BY order_date_epoch) to 'C:\Users\gcuta\Documents\Final Project\data\central_profits.csv' with csv header;
